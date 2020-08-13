@@ -1,33 +1,76 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    {% assets "home_css" %}
-      <link rel="stylesheet" href="{{ ASSET_URL }}">
-    {% endassets %}
+  <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}">
 
-    {% assets "home_js" %}
-      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
+  {% assets "home_css" %}
+  <link rel="stylesheet" href="{{ ASSET_URL }}">
+  {% endassets %}
 
-    {% block header %}
-    {% endblock %}
+  {% assets "home_js" %}
+  <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
 
-    <title>
-      {% block title %}
-      {% endblock %}NEXTAGRAM
-    </title>
+  {% block header %}
+  {% endblock %}
 
-  </head>
-  <body>
-    {% block content %}
-    {% endblock %}
-    <footer>
-      Made with &hearts; at <a target="_blank" href="https://www.nextacademy.com/?utm_source=github&utm_medium=student-challenge&utm_campaign=flask-nextagram">NEXT Academy</a>
-    </footer>
-  </body>
+  <title>
+    {% block title %}
+    {% endblock %}FLASKGRAM
+  </title>
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-info">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="{{url_for('home')}}">Home <span class="sr-only">(current)</span></a>
+        </li>
+        {% if current_user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="/users/{{current_user.username}}">profile</a>
+        </li>
+        {% endif %}
+      </ul>
+      <div>
+        {% if current_user.is_authenticated %}
+        <li style="list-style: none;">
+          <form action="{{ url_for('sessions.destroy')}}" method="post">
+            <input type="submit" value="Sign Out">
+          </form>
+        </li>
+        {% else %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('sessions.new')}}">Sign In</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('users.new')}}">Sign Up</a>
+        </li>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  {% block content %}
+  {% endblock %}
+  <footer>
+    Made with &hearts; at <a target="_blank"
+      href="https://www.nextacademy.com/?utm_source=github&utm_medium=student-challenge&utm_campaign=flask-nextagram">NEXT
+      Academy</a>
+  </footer>
+</body>
+
 </html>

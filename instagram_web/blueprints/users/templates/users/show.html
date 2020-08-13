@@ -1,0 +1,54 @@
+{%extends '_layout.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="col-3 text-center">
+        <img src="{{user.full_image_path}}" class="img-thumbnail rounded-circle" width="200" />
+        <h6>@{{user.username}}</h6>
+        {# only show if current user is owner of profile #}
+        {% if current_user.id == user.id %}
+        <a class="btn btn-sm btn-outline-secondary" href="{{url_for('users.edit',id=user.id)}}">Edit Profile</a>
+        {% else %}
+        {% if current_user.follow_status(user) %}
+        <form action="{{url_for('users.unfollow',idol_id=user.id)}}" method="POST">
+            <input type="submit" class="btn btn-sm btn-outline-primary" value="Unfollow">
+        </form>
+        {% else %}
+        <form action="{{url_for('users.follow',idol_id=user.id)}}" method="POST">
+            <input type="submit" class="btn btn-sm btn-outline-primary" value="Follow">
+        </form>
+        {% endif %}
+        {% endif %}
+
+        <ul>
+            <h6>{{user.username}}'s Idols</h6>
+            {% for idol in user.idols %}
+            <li>{{idol.username}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            <h6>{{user.username}}'s Fans</h6>
+            {% for fan in user.fans %}
+            <li>{{fan.username}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<div class="container row">
+    {% if current_user.id == user.id or not user.is_private %}
+    {% for image in user.images %}
+    <div class="card" style="width: 400px;">
+        <img src="{{image.full_image_url}}" width="100%" />
+        {# only show if current user is not owner of profile #}
+        {% if not current_user.id == user.id %}
+        <div>
+            <a href="{{url_for('donations.new',image_id=image.id)}}" class="btn btn-primary">Donate</a>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <span class="mx-auto">This profile is private. Follow @{{user.username}} to continue.</span>
+    {% endif %}
+</div>
+{% endblock %}

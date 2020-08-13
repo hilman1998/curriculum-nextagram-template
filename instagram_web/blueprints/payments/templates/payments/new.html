@@ -1,0 +1,77 @@
+{% extends '_layout.html' %}
+
+{% block content %}
+
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://js.braintreegateway.com/web/dropin/1.23.0/js/dropin.min.js"></script>
+</head>
+
+<body>
+
+    <h1 align="center">PAY UP!</h1>
+    <form id='form' action="{{url_for('payments.create_purchase',image_id=image_id)}}" method="POST">
+        <div class='form-group'>
+            <label for="amount">how much?</label>
+            <input type="text" name="amount" class="form-control" placeholder="$0.00" />
+            <br>
+            <input type="hidden" id="nonce" name="payment_nonce" />
+        </div>
+        <button type="submit" id="submit-button">Request payment method</button>
+        <div id="dropin-container"></div>
+    </form>
+
+
+
+    <script>
+        var button = document.querySelector('#submit-button');
+        var form = document.querySelector('#form');
+
+        braintree.dropin.create({
+            authorization: '{{client_token}}',
+            container: '#dropin-container'
+        }, function (createErr, instance) {
+            button.addEventListener('click', function (e) {
+                e.preventDefault()
+                instance.requestPaymentMethod(function (err, payload) {
+                    document.querySelector('#nonce').value = payload.nonce
+                    form.submit()
+                });
+            });
+        });
+    </script>
+</body>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- // braintree.dropin.create({
+// authorization: "{{ client_token }}",
+// container: '#dropin-container'
+// }, function (createErr, instance) {
+// button.addEventListener('click', function (event) {
+// event.preventDefault()
+// instance.requestPaymentMethod(function (err, payload) {
+// document.querySelector('#nonce').value = payload.nonce
+// form.submit()
+// });
+// });
+// }); -->
